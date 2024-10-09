@@ -1,0 +1,5 @@
+
+[sncast.ibukun]
+account = "ibukun"
+accounts-file = "/home/ibukun/.starknet_accounts/starknet_open_zeppelin_accounts.json"
+url = "https://free-rpc.nethermind.io/sepolia-juno/"
