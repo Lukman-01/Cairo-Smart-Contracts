@@ -1,10 +1,29 @@
-# Deploying an account
+# Starknet Counter Project
+
+This project demonstrates a simple counter smart contract deployed on the Starknet Sepolia testnet. The application allows users to increment and fetch the count stored in the contract via a frontend built with React and a backend for managing contract deployment and interaction using `sncast`.
+
+## Overview
+
+The project consists of:
+1. **Frontend**: A React app that interacts with the Starknet smart contract to display and set a count.
+2. **Backend**: Instructions for deploying an account, declaring a contract, and managing contract state using the Starknet `sncast` tool.
+
+## Prerequisites
+
+- Node.js and npm installed
+- Starknet `sncast` CLI installed
+- Access to the Starknet Sepolia testnet
+
+# Creating an account
 
 sncast --url https://free-rpc.nethermind.io/sepolia-juno/ account create --name ibukun  --add-profile ibukun
 
-ibukun@Ibukun:~$ cd .starknet_accounts ls -a -1
+cd ~
+cd .starknet_accounts ls -a -1
 
-fund the account
+fund the account address you gaet above
+
+# Deploying an account
 
 sncast --url https://free-rpc.nethermind.io/sepolia-juno/ account deploy --name ibukun --fee-token eth --max-fee 9999999999999
 
@@ -15,6 +34,10 @@ sncast --url https://free-rpc.nethermind.io/sepolia-juno/ --account ibukun decla
 # Deploy contract account
 
 sncast --url https://free-rpc.nethermind.io/sepolia-juno/ --account ibukun deploy --fee-token eth --class-hash 0x23ebf32878c16cdb1172a0b24163eedbb0b6cc9ffef51baabc984dfa0a0cbdd
+
+command: deploy
+contract_address: 0x180093214030faef0885dd14ab35bd062471c6a2c3916c08073a0c4a4d2bb1f
+transaction_hash: 0x4535d8f099c417b3f31e0304fed31749e5ef72736fdfc5c12602ece26d3f274
 
 # Constructor arguments format
 
@@ -89,3 +112,7 @@ sncast deploy \
 - `0x7 0x400 0x1`: Tuple with `felt252 = 7` and `u256 = 1024`, split into `low = 0x400` and `high = 0x1`.
 
 # Invoking Contracts
+
+sncast --profile intro invoke  --contract-address 0x180093214030faef0885dd14ab35bd062471c6a2c3916c08073a0c4a4d2bb1f --function "set_count" --calldata 5 --fee-token eth
+
+sncast --profile intro invoke  --contract-address 0x180093214030faef0885dd14ab35bd062471c6a2c3916c08073a0c4a4d2bb1f --function "get_count" --fee-token eth
