@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import './App.css'
-
+import WalletBar from "./WalletBar.jsx";
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      <WalletBar />
       <div className="bg-white rounded-lg shadow-md p-6 w-full max-w-md">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">Smart Contract Counter</h1>
         
