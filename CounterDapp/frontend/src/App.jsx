@@ -16,6 +16,7 @@ function App() {
     args: [],
     abi: abi,
     address: contractAddress,
+    enabled:false,
     watch: true,
     refetchInterval: 1000
   });
