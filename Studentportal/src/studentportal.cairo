@@ -6,7 +6,7 @@ pub trait IStudentPortal<TContractState> {
 
     fn delete_student(ref self: TContractState, student_id: u32);
 
-    fn get_student(self: @TContractState, student_id: u32) -> (u32, ByteArray, ByteArray, ByteArray, ByteArray);
+    fn get_one_student(self: @TContractState, student_id: u32) -> (u32, ByteArray, ByteArray, ByteArray, ByteArray);
 }
 
 #[starknet::contract]
@@ -51,21 +51,24 @@ pub mod StudentPortal {
 
     #[derive(Drop, starknet::Event)]
     pub struct StudentCreated { 
-        student_id: u32, 
-        name: ByteArray, 
-        country: ByteArray 
+        #[key]
+        pub student_id: u32, 
+        pub name: ByteArray,
+        pub country: ByteArray 
     }
 
     #[derive(Drop, starknet::Event)]
-    pub struct StudentUpdated { 
-        student_id: u32, 
-        name: ByteArray, 
-        country: ByteArray 
+    pub struct StudentUpdated {
+        #[key] 
+        pub student_id: u32, 
+        pub name: ByteArray, 
+        pub country: ByteArray 
     }
 
     #[derive(Drop, starknet::Event)]
     pub struct StudentDeleted { 
-        student_id: u32 
+        #[key]
+        pub student_id: u32 
     }
 
     #[constructor]
@@ -76,12 +79,18 @@ pub mod StudentPortal {
     #[abi(embed_v0)]
     impl StudentPortalImpl of super::IStudentPortal<ContractState> {
         fn register_student(ref self: ContractState, date_of_birth: u32, name: ByteArray, email: ByteArray, state: ByteArray, country: ByteArray) -> u32 {
+
+            self.ownable.assert_only_owner();
+
             assert!(name.len() != 0, "Name is required.");
             assert!(email.len() != 0, "Email is required.");
             assert!(date_of_birth != 0, "Date of birth is required.");
 
             let student_id = self.student_count.read();
             self.student_count.write(self.student_count.read() + 1);
+
+            let student_name = name.clone();
+            let student_country = country.clone();
 
             let student = Student {
                 date_of_birth,
@@ -93,20 +102,28 @@ pub mod StudentPortal {
 
             self.students.write(student_id, student);
 
-            self.emit(Event::StudentCreated(StudentCreated {
+            self.emit(Event::StudentCreated(StudentCreated{
                 student_id,
-                name,
-                country,
+                name: student_name, 
+                country: student_country
             }));
 
             student_id
         }
 
         fn update_student(ref self: ContractState, student_id: u32, date_of_birth: u32, name: ByteArray, email: ByteArray, state: ByteArray, country: ByteArray) {
-            assert!(self.students(student_id), "Student not found.");
+            
+            let studentCheck = PrivateFunctionsTrait::get_student(@self, student_id);
+            assert!(studentCheck!= (0,"","","",""), "Student not found."); 
+
+            self.ownable.assert_only_owner();
+
             assert!(name.len() != 0, "Name is required.");
             assert!(email.len() != 0, "Email is required.");
             assert!(date_of_birth != 0, "Date of birth is required.");
+
+            let student_name = name.clone();
+            let student_country = country.clone();
 
             let updated_student = Student {
                 date_of_birth,
@@ -118,31 +135,51 @@ pub mod StudentPortal {
 
             self.students.write(student_id, updated_student);
 
-            self.emit(Event::StudentUpdated(StudentUpdated {
+            self.emit(Event::StudentUpdated (StudentUpdated{
                 student_id,
-                name,
-                country,
+                name: student_name,
+                country: student_country,
             }));
         }
 
         fn delete_student(ref self: ContractState, student_id: u32) {
-            assert!(self.students(student_id), "Student not found.");
+            self.ownable.assert_only_owner();
+            
+            let studentCheck = PrivateFunctionsTrait::get_student(@self, student_id);
+            assert!(studentCheck!= (0,"","","",""), "Student not found."); 
 
-            self.students.delete(student_id);
 
-            self.emit(Event::StudentDeleted { student_id });
+            let delete_student = Student {
+                date_of_birth: 0,
+                name: "",
+                email: "",
+                state: "",
+                country: "",
+            };
+        
+            self.students.write(student_id, delete_student);
+        
+            self.emit(Event::StudentDeleted(StudentDeleted{ student_id }));
         }
 
-        fn get_student(self: @ContractState, student_id: u32) -> (u32, ByteArray, ByteArray, ByteArray, ByteArray) {
-            assert!(self.students.exists(student_id), "Student not found.");
+        fn get_one_student(self: @ContractState, student_id: u32) -> (u32, ByteArray, ByteArray, ByteArray, ByteArray){
+            let one = PrivateFunctionsTrait::get_student(self, student_id);
+            one
+        }
 
-            let student = self.students.read(student_id);
+    }
+
+    #[generate_trait]
+    pub impl PrivateFunctions of PrivateFunctionsTrait {
+           
+        fn get_student(self: @ContractState, student_id: u32) -> (u32, ByteArray, ByteArray, ByteArray, ByteArray) {
+            let studentGet = self.students.read(student_id);
             (
-                student.date_of_birth,
-                student.name,
-                student.email,
-                student.state,
-                student.country,
+                studentGet.date_of_birth,
+                studentGet.name,
+                studentGet.email,
+                studentGet.state,
+                studentGet.country,
             )
         }
     }
