@@ -1,0 +1,11 @@
+ract-name Bank
+   Compiling bank v0.1.0 (/home/ibukun/Desktop/Cairo-Smart-Contracts/BankContract/Scarb.toml)
+    Finished release target(s) in 19 seconds
+command: declare
+class_hash: 0x67450bc5c176b443f884c0a861426c4e9aa00e0e4c6f7c631a4078946d74285
+transaction_hash: 0x728a6bc5de9236f6a7248611f3c37d97a38a3c0aa26cd4db68962a369764ffa
+
+ibukun@Ibukun:~/Desktop/Cairo-Smart-Contracts/BankContract$ sncast --url https://free-rpc.nethermind.io/sepolia-juno/ --account ibukun deploy --fee-token strk --class-hash 0x067450bc5c176b443f884c0a861426c4e9aa00e0e4c6f7c631a4078946d74285 --constructor-calldata 0x04a62cf5Bd7300cBc67B1F464357E5a6484267b606C93c80bB5d0BEb81DA1A0a
+command: deploy
+contract_address: 0x3bc9d8dc47cdc280d9b860b3ea2ada99fa0ac22171c795000bd5fef2fb1ff3
+transaction_hash: 0x3383ecded7d7ae8dd772b9e06ed050294bb0f37933f5375b6150df9a781b3ac

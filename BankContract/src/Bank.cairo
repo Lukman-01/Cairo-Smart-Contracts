@@ -10,7 +10,7 @@ trait IBank<TContractState> {
 }
 
 #[starknet::contract]
-mod  Bank{
+pub mod Bank{
 
     use core::starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
     use OwnableComponent::InternalTrait;

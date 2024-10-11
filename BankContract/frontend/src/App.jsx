@@ -1,7 +1,24 @@
 import { useState } from 'react'
+import WalletBar from './WalletBar';
+import { useReadContract, useContract, useAccount } from "@starknet-react/core";
+import abi from "../abi/abi.json";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('account')
+
+  const contractAddress = "0x003bc9d8dc47cdc280d9b860b3ea2ada99fa0ac22171c795000bd5fef2fb1ff3";
+
+  // const { data, error } = useReadContract({
+  //   abi:abi,
+  //   functionName: "symbol",
+  //   address: contractAddress,
+  //   args: [],
+  // });
+
+  const { contract } = useContract({
+    abi,
+    address: contractAddress,
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-indigo-200 p-4">
@@ -9,6 +26,7 @@ export default function App() {
         <h1 className="text-4xl font-bold text-center mb-8 text-indigo-800 drop-shadow-md">
           DBank - Decentralized Banking
         </h1>
+        <WalletBar />
         <div className="w-full max-w-3xl mx-auto bg-white rounded-xl shadow-2xl overflow-hidden">
           <div className="flex bg-indigo-600 text-white">
             {['account', 'deposit', 'withdraw', 'transfer', 'balance'].map((tab) => (
