@@ -1,24 +1,40 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react';
 import WalletBar from './WalletBar';
-import { useReadContract, useContract, useAccount } from "@starknet-react/core";
+import { useAccount, useContract, useSendTransaction } from "@starknet-react/core";
 import abi from "../abi/abi.json";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('account')
+  const [activeTab, setActiveTab] = useState('account');
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
 
-  const contractAddress = "0x003bc9d8dc47cdc280d9b860b3ea2ada99fa0ac22171c795000bd5fef2fb1ff3";
-
-  // const { data, error } = useReadContract({
-  //   abi:abi,
-  //   functionName: "symbol",
-  //   address: contractAddress,
-  //   args: [],
-  // });
+  const contractAddress = "0x2dd7f3723abc383644097696d21c2aee2b3282f12978a27a4586ad7f71f829d";
+  const { address: userAddress } = useAccount();
 
   const { contract } = useContract({
     abi,
     address: contractAddress,
   });
+  
+  const ageBigInt = BigInt(age);
+
+  const calls = useMemo(() => {
+    if (!contract) return [];
+    return [contract.populate("createAccount", [name, ageBigInt])];
+
+  }, [contract, userAddress, name, age]);
+
+  const { send: writeAsync, data: writeData } = useSendTransaction({
+    calls,
+  });
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    console.log("Form submitted with name", name, "and age", age);
+    if (writeAsync) {
+      writeAsync();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-indigo-200 p-4">
@@ -59,6 +75,8 @@ export default function App() {
                       id="name"
                       className="w-full p-2 border border-indigo-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                       placeholder="John Doe"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                     />
                   </div>
                   <div>
@@ -70,9 +88,14 @@ export default function App() {
                       id="age"
                       className="w-full p-2 border border-indigo-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                       placeholder="18"
+                      value={age}
+                      onChange={(e) => setAge(e.target.value)}
                     />
                   </div>
-                  <button className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                  <button 
+                  className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  onClick={handleSubmit}
+                  >
                     Create Account
                   </button>
                 </div>
