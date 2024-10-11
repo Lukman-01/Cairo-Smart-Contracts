@@ -10,6 +10,8 @@ export default function App() {
 
   const contractAddress = "0x2dd7f3723abc383644097696d21c2aee2b3282f12978a27a4586ad7f71f829d";
   const { address: userAddress } = useAccount();
+  console.log(userAddress);
+  console.log(contractAddress)
 
   const { contract } = useContract({
     abi,
@@ -17,6 +19,9 @@ export default function App() {
   });
   
   const ageBigInt = BigInt(age);
+  const byteArray = function(){
+    
+  }
 
   const calls = useMemo(() => {
     if (!contract) return [];

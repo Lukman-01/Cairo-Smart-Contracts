@@ -13,22 +13,22 @@ trait IBank<TContractState> {
 pub mod Bank{
 
     use core::starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
-    // use OwnableComponent::InternalTrait;
-    // use openzeppelin::access::ownable::OwnableComponent;
+    use OwnableComponent::InternalTrait;
+    use openzeppelin::access::ownable::OwnableComponent;
     use starknet::{ContractAddress, get_caller_address, event::EventEmitter, storage::Map};
 
-    //component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
+    component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
 
-    // #[abi(embed_v0)]
-    // impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
-    // impl InternalImpl = OwnableComponent::InternalImpl<ContractState>;
+    #[abi(embed_v0)]
+    impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
+    impl InternalImpl = OwnableComponent::InternalImpl<ContractState>;
 
     #[storage]
     struct Storage {
         usercount:u256,
         users:Map<ContractAddress, User>,
-        // #[substorage(v0)]
-        // ownable: OwnableComponent::Storage
+        #[substorage(v0)]
+        ownable: OwnableComponent::Storage
     }
 
     #[derive(Drop, Serde, starknet::Store)]
@@ -53,8 +53,8 @@ pub mod Bank{
         DepositMade: DepositMade,
         TransferMade: TransferMade,
         WithdrawalMade: WithdrawalMade,
-        // #[flat]
-        // OwnableEvent: OwnableComponent::Event,
+        #[flat]
+        OwnableEvent: OwnableComponent::Event,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -87,10 +87,10 @@ pub mod Bank{
         amount: u256
     }
 
-    // #[constructor]
-    // fn constructor(ref self: ContractState, initial_owner: ContractAddress) {
-    //     self.ownable.initializer(initial_owner);
-    // }
+    #[constructor]
+    fn constructor(ref self: ContractState, initial_owner: ContractAddress) {
+        self.ownable.initializer(initial_owner);
+    }
 
     #[abi(embed_v0)]
     impl BankImpl of super::IBank<ContractState> {
