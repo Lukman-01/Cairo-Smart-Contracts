@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState } from 'react';
 import WalletBar from './WalletBar';
 import { useAccount, useContract, useSendTransaction } from "@starknet-react/core";
 //import abi from "../abi/abi.json";
