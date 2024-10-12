@@ -1,8 +1,12 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import WalletBar from './WalletBar';
+import { useAccount, useContract, useSendTransaction } from "@starknet-react/core";
+//import abi from "../abi/abi.json";
 
 export default function StakingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+      <WalletBar/>
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
         <div className="px-6 py-8">
           <h1 className="text-4xl font-extrabold text-center text-blue-900 mb-8">Staking Dashboard</h1>
